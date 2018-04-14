@@ -1,7 +1,7 @@
 language: dart
 dart:
   - stable
-  - "dev/release/2.0.0-dev.16.0"
+  - dev
 dart_task:
   - test: --platform vm
   - test: --platform dartium
