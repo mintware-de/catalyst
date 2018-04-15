@@ -7,5 +7,8 @@ dart_task:
   - dartanalyzer: true
   - dartfmt
 
+before_install:
+  - chmod +x travis.sh
+
 script:
   - ./travis.sh
