@@ -1,3 +1,8 @@
+[![GitHub license](https://img.shields.io/github/license/Devtronic/catalyst.svg)](https://github.com/Devtronic/catalyst/blob/master/LICENSE)
+[![Travis](https://img.shields.io/travis/Devtronic/catalyst.svg)](https://travis-ci.org/Devtronic/catalyst)
+[![Pub](https://img.shields.io/pub/v/catalyst.svg)](https://pub.dartlang.org/packages/catalyst)
+[![Coverage Status](https://coveralls.io/repos/github/Devtronic/catalyst/badge.svg?branch=master)](https://coveralls.io/github/Devtronic/catalyst?branch=master)
+
 # Catalyst
 
 Catalyst is a dependency injection container for the dart language.
