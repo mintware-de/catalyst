@@ -8,7 +8,7 @@
 Catalyst is a dependency injection container for the dart language.
 It's fast, reliable and easy to understand.
 
-## Installation
+## 📦 Installation
 Add the following to your `pubspec.yaml`:
 ```yaml
 dependencies:
@@ -17,7 +17,7 @@ dependencies:
 
 Then run `pub get`
 
-## Usage
+## 💡 Usage
 
 ### Importing
 ```dart
@@ -106,7 +106,7 @@ Once a service is loaded, it remains in memory at runtime.
 When the same service is loaded again, the first instance is returned.
 
 ```
-Container::get(String id)
+Container.get(String id)
 ```
 |  Parameter | Description                     | Example        |
 |:-----------|:--------------------------------|:---------------|
@@ -126,7 +126,7 @@ container.get('namer'); // returns "Catalyst"
 The service container also supports static parameters.  
 You can add a parameter using the `addParameter`-method
 ```
-Container::addParameter(String name, dynamic value)
+Container.addParameter(String name, dynamic value)
 ```
 |  Parameter | Description                       | Example        |
 |:-----------|:----------------------------------|:---------------|
@@ -145,14 +145,38 @@ return 'Connecting to $hostname';
 print(container.get('db.context')); // Outputs "Connecting to localhost"
 ```
 
-## Testing
+## 🔌 Service auto wiring
+Catalyst supports auto wiring of services.
+That means, that you only need to register the service without passing depending service names as arguments.
+(Strong typing is required).
+ 
+For example:
+```dart
+main() {
+  Container container = new Container();
+  container.register('greeter', SimpleGreeter);
+  container.register('greeting_printer', (SimpleGreeter greeter) {
+    print(greeter.greet('Catalyst'));
+  });
+
+  container.get('greeting_printer'); // Outputs "Hello from Catalyst!"
+}
+
+class SimpleGreeter {
+
+  String greet(String name) {
+    return "Hello from $name!";
+  }
+}
+```
+
+You can disable this behaviour with setting `Container.autoWire = false;`
+
+## 🔬 Testing
 
 ```bash
 $ pub run test
 ```
 
-## Contribute
+## 🤝 Contribute
 Feel free to fork and add pull-requests 🤓
-
-## Todo
-Implement auto wiring of services

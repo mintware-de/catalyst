@@ -257,6 +257,30 @@ void main() {
     }, ['%database.host%:%database.port%']);
     expect(container.get('db.ctx'), 'Connecting to my.server.tld:1337');
   });
+
+  test('Autowiring service fails', () {
+    var container = new Container();
+    container.autoWire = true;
+    container.register('simple_date', SimpleDate, [1955]);
+    container.register('year_printer', (SimpleDate sd, Container nonExistent) {
+      return 'Year: ${sd.year}';
+    });
+
+    var msg = 'The Service "year_printer" expects exact 2 arguments, 1 given';
+    expect(() => container.get('year_printer'),
+        throwsA(predicate((e) => e is Exception && e.message == msg)));
+  });
+
+  test('Autowiring service', () {
+    var container = new Container();
+    container.autoWire = true;
+    container.register('simple_date', SimpleDate, [1955]);
+    container.register('year_printer', (SimpleDate sd) {
+      return 'Year: ${sd.year}';
+    });
+
+    expect(container.get('year_printer'), 'Year: 1955');
+  });
 }
 
 class SimpleDate {
