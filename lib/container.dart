@@ -28,99 +28,11 @@ class Container implements ContainerInterface {
       throw new ServiceNotFoundException('The service "$id" does not exist');
     }
 
-    if (this._loadedServices.containsKey(id)) {
-      return this._loadedServices[id];
+    if (!this._loadedServices.containsKey(id)) {
+      return _loadAndRetrieveService(id);
     }
 
-    var target = this._services[id].target;
-    var injections = this._services[id].arguments ?? [];
-
-    var isClass = target is Type;
-    var isClosure = target is Function;
-
-    MethodMirror reflection;
-    dynamic mirror;
-    if (isClass) {
-      mirror = reflectClass(target);
-      var members = mirror.declarations.values;
-      if (members.length > 0) {
-        reflection =
-            members.firstWhere((m) => m is MethodMirror && m.isConstructor);
-      }
-    } else if (isClosure) {
-      mirror = reflect(target) as ClosureMirror;
-      reflection = mirror.function;
-    }
-
-    int parameterIndex = -1;
-    int minArguments = 0;
-    bool doAutoWire = autoWire;
-    for (var parameter in reflection.parameters) {
-      parameterIndex++;
-      minArguments += !parameter.isOptional ? 1 : 0;
-
-      if (doAutoWire && (injections.length < parameterIndex + 1)) {
-        var locatedSvc = this._services.values.firstWhere((Service svc) {
-          if (!(svc.target is Type)) {
-            return false;
-          }
-          var svcType = reflectType(svc.target).reflectedType;
-          return parameter.type.reflectedType == svcType;
-        }, orElse: () => null);
-
-        if (locatedSvc == null) {
-          doAutoWire = false; // Auto wiring failed
-          continue;
-        }
-
-        injections.add(get(locatedSvc.id));
-      }
-    }
-
-    int numGiven = injections.length;
-    int maxArguments = reflection.parameters.length;
-    if (numGiven < minArguments || numGiven > maxArguments) {
-      var message =
-          'The Service "$id" expects exact $minArguments arguments, $numGiven given';
-      if (maxArguments != minArguments) {
-        message =
-            'The Service "$id" expects min. $minArguments and max. $maxArguments arguments, $numGiven given';
-      }
-      throw new Exception(message);
-    }
-
-    var arguments = [];
-    for (var injection in injections) {
-      var parameter = injection;
-
-      if (injection is String) {
-        var matcher = new RegExp(r"%([^%]*?)%");
-
-        if (parameter.substring(0, 1) == '@') {
-          parameter = get(parameter.substring(1));
-        } else if (matcher.hasMatch(parameter)) {
-          Iterable<Match> matches = matcher.allMatches(parameter);
-          matches.forEach((m) {
-            var param = getParameter(m.group(1));
-            parameter = parameter.replaceAll(m.group(0), param);
-          });
-        }
-      }
-
-      arguments.add(parameter);
-    }
-
-    dynamic loadedService = null;
-    if (isClass) {
-      loadedService = (mirror as ClassMirror)
-          .newInstance(const Symbol(''), arguments)
-          .reflectee;
-    } else if (isClosure) {
-      loadedService = (mirror as ClosureMirror).apply(arguments).reflectee;
-    }
-
-    _loadedServices[id] = loadedService;
-    return loadedService;
+    return this._loadedServices[id];
   }
 
   @override
@@ -201,6 +113,94 @@ class Container implements ContainerInterface {
       throw new ParameterNotDefinedException(msg);
     }
     return _parameters[name];
+  }
+
+  dynamic _loadAndRetrieveService(String id) {
+    var arguments = this._services[id].arguments ?? [];
+    if (autoWire) {
+      arguments = _doAutoWire(this._services[id].targetMirror, arguments);
+    }
+
+    var numGiven = arguments.length;
+    var metadata = this._services[id].getMetadata();
+    if (numGiven < metadata.minArguments || numGiven > metadata.maxArguments) {
+      throw new Exception(_buildWrongArgsMessage(id, numGiven, metadata));
+    }
+
+    arguments = _injectServicesAndParameters(arguments);
+
+    dynamic service = null;
+    var target = this._services[id].target;
+    if (target is Type) {
+      service = reflectClass(target).newInstance(const Symbol(''), arguments);
+    } else if (target is Function) {
+      service = (reflect(target) as ClosureMirror).apply(arguments);
+    }
+
+    return _loadedServices[id] = service?.reflectee;
+  }
+
+  List<dynamic> _injectServicesAndParameters(List<dynamic> arguments) {
+    var injected = [];
+    for (var argument in arguments) {
+      if (argument is String) {
+        var paramMatcher = new RegExp(r"%([^%]*?)%");
+
+        if (argument.substring(0, 1) == '@') {
+          argument = get(argument.substring(1));
+        } else if (paramMatcher.hasMatch(argument)) {
+          paramMatcher.allMatches(argument).forEach((match) {
+            var paramValue = getParameter(match.group(1));
+            argument = argument.replaceAll(match.group(0), paramValue);
+          });
+        }
+      }
+      injected.add(argument);
+    }
+    return injected;
+  }
+
+  List<dynamic> _doAutoWire(MethodMirror reflection, List<dynamic> arguments) {
+    var returnArguments = arguments;
+    var parameterIndex = -1;
+    for (var parameter in reflection.parameters) {
+      parameterIndex++;
+      if ((returnArguments.length < parameterIndex + 1)) {
+        var locatedSvc = this._services.values.firstWhere((Service svc) {
+          if (!(svc.target is Type)) {
+            return false;
+          }
+          var svcType = reflectType(svc.target).reflectedType;
+          return parameter.type.reflectedType == svcType;
+        }, orElse: () => null);
+
+        if (locatedSvc == null) {
+          break;
+        }
+
+        returnArguments.add(get(locatedSvc.id));
+      }
+    }
+    return returnArguments;
+  }
+
+  /// Builds the message for wrong args count
+  ///
+  /// 'The Service "foobar" expects exact 0 arguments, 1 given'
+  /// 'The Service "foobar" expects min 1 and max. 2 arguments, 3 given'
+  String _buildWrongArgsMessage(String id, int numGiven, ServiceMetaData meta) {
+    var buffer = new StringBuffer();
+    buffer.write('The Service "$id" expects ');
+
+    if (meta.minArguments == meta.maxArguments) {
+      buffer.write('exact ${meta.minArguments} arguments');
+    } else {
+      buffer.write('min. ${meta.minArguments} and ');
+      buffer.write('max. ${meta.maxArguments} arguments');
+    }
+    buffer.write(', $numGiven given');
+
+    return buffer.toString();
   }
 
   /// Returns all registered services

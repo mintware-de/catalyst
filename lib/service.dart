@@ -11,19 +11,53 @@ part of Catalyst;
 
 class Service {
   /// The id of the service
-  String _id;
+  final String _id;
 
   /// The target if the service is resolved
   ///
   /// A class symbol will be resolved by calling the constructor with  [_arguments]
   /// Closures will be called with [_arguments]
-  dynamic _target;
+  final dynamic _target;
 
   /// The arguments which are required to resolve the target
-  List<dynamic> _arguments;
+  final List<dynamic> _arguments;
+
+  bool _targetMirrorLoaded = false;
+  MethodMirror _targetMirror;
 
   /// Creates a new service object
   Service(this._id, this._target, [this._arguments]);
+
+  ServiceMetaData getMetadata() {
+    var mirror = targetMirror;
+    var minArguments = 0;
+    var maxArguments = mirror.parameters.length;
+
+    List<Type> argTypes = [];
+
+    for (var parameter in mirror.parameters) {
+      minArguments += !parameter.isOptional ? 1 : 0;
+      argTypes.add(parameter.type.reflectedType);
+    }
+
+    return new ServiceMetaData(minArguments, maxArguments, argTypes);
+  }
+
+  MethodMirror get targetMirror {
+    if (!_targetMirrorLoaded) {
+      if (target is Type) {
+        var members = reflectClass(target).declarations.values;
+        if (members.length > 0) {
+          _targetMirror =
+              members.firstWhere((m) => m is MethodMirror && m.isConstructor);
+        }
+      } else if (target is Function) {
+        _targetMirror = (reflect(target) as ClosureMirror).function;
+      }
+      _targetMirrorLoaded = true;
+    }
+    return _targetMirror;
+  }
 
   /// Getter for [_id]
   String get id => _id;

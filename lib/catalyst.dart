@@ -16,3 +16,4 @@ part './container_interface.dart';
 part './exception/parameter_not_defined_exception.dart';
 part './exception/service_not_found_exception.dart';
 part './service.dart';
+part './service_metadata.dart';
