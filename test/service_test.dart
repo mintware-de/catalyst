@@ -15,7 +15,7 @@ void main() {
     var srv = new Service('foo', () => false);
 
     expect(srv.id, 'foo');
-    expect(srv.target, const TypeMatcher<Function>());
+    expect(srv.target, new isInstanceOf<Function>());
     expect(srv.arguments, null);
   });
 
@@ -23,7 +23,7 @@ void main() {
     var srv = new Service('bar', () => 42, ['foo', 'baz', 12]);
 
     expect(srv.id, 'bar');
-    expect(srv.target, const TypeMatcher<Function>());
+    expect(srv.target, new isInstanceOf<Function>());
     expect(srv.arguments, ['foo', 'baz', 12]);
   });
 

@@ -1,7 +1,6 @@
 ## 1.1.1
 
 Tests fixed
-- Using `TypeMatcher<T>` instead of `isInstanceOf<T>`
 - Using `Exception.toString()` instead of accessing the message property
 
 ## 1.1.0
