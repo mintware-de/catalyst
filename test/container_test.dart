@@ -13,8 +13,8 @@ import 'package:test/test.dart';
 void main() {
   test('Test constructor and inheritance', () {
     var container = new Container();
-    expect(container, new isInstanceOf<Container>());
-    expect(container, new isInstanceOf<ContainerInterface>());
+    expect(container, const TypeMatcher<Container>());
+    expect(container, const TypeMatcher<ContainerInterface>());
   });
 
   test('Test register a service name twice fails', () {
@@ -25,7 +25,8 @@ void main() {
         () => container.register('failing', () {}),
         throwsA(predicate((e) =>
             e is Exception &&
-            e.message == 'A service with the id "failing" already exist')));
+            e.toString() ==
+                'Exception: A service with the id "failing" already exist')));
   });
 
   test('Test register a service with an empty id fails', () {
@@ -36,13 +37,14 @@ void main() {
         () => container.register('                       ', () {}),
         throwsA(predicate((e) =>
             e is Exception &&
-            e.message == 'The id must have at least one character')));
+            e.toString() ==
+                'Exception: The id must have at least one character')));
   });
 
   test('Test register a service', () {
     var container = new Container();
     container.register('hello', () {});
-    expect(container.registeredServices['hello'], new isInstanceOf<Service>());
+    expect(container.registeredServices['hello'], const TypeMatcher<Service>());
   });
 
   test('Unregister service fails missing', () {
@@ -60,9 +62,10 @@ void main() {
     container.register('foo', () => null);
     container.get('foo');
 
-    var msg = 'The service "foo" can not be unregistered because it\'s loaded';
+    var msg =
+        'Exception: The service "foo" can not be unregistered because it\'s loaded';
     expect(() => container.unregister('foo'),
-        throwsA(predicate((e) => e is Exception && e.message == msg)));
+        throwsA(predicate((e) => e is Exception && e.toString() == msg)));
   });
 
   test('Unregister service', () {
@@ -107,18 +110,19 @@ void main() {
     var container = new Container();
     container.register('msg', (String dependency) => null, ['1', '2']);
 
-    var msg = 'The Service "msg" expects exact 1 arguments, 2 given';
+    var msg = 'Exception: The Service "msg" expects exact 1 arguments, 2 given';
     expect(() => container.get('msg'),
-        throwsA(predicate((e) => e is Exception && e.message == msg)));
+        throwsA(predicate((e) => e is Exception && e.toString() == msg)));
   });
 
   test('Load service with optional dependency fails', () {
     var container = new Container();
     container.register('msg', ([String dependency]) => null, ['1', '2']);
 
-    var msg = 'The Service "msg" expects min. 0 and max. 1 arguments, 2 given';
+    var msg =
+        'Exception: The Service "msg" expects min. 0 and max. 1 arguments, 2 given';
     expect(() => container.get('msg'),
-        throwsA(predicate((e) => e is Exception && e.message == msg)));
+        throwsA(predicate((e) => e is Exception && e.toString() == msg)));
   });
 
   test('Load Service with static dependency', () {
@@ -186,9 +190,9 @@ void main() {
     var container = new Container();
     container.addParameter('foobar', 'baz');
 
-    var msg = 'The parameter "foobar" is already defined';
+    var msg = 'Exception: The parameter "foobar" is already defined';
     expect(() => container.addParameter('foobar', 'baz'),
-        throwsA(predicate((e) => e is Exception && e.message == msg)));
+        throwsA(predicate((e) => e is Exception && e.toString() == msg)));
   });
 
   test('Set parameter', () {
@@ -234,7 +238,7 @@ void main() {
     container.register('simpleDate', SimpleDate, [1955]);
 
     var date = container.get('simpleDate');
-    expect(date, new isInstanceOf<SimpleDate>());
+    expect(date, const TypeMatcher<SimpleDate>());
     expect(date.year, 1955);
   });
 
@@ -266,9 +270,10 @@ void main() {
       return 'Year: ${sd.year}';
     });
 
-    var msg = 'The Service "year_printer" expects exact 2 arguments, 1 given';
+    var msg =
+        'Exception: The Service "year_printer" expects exact 2 arguments, 1 given';
     expect(() => container.get('year_printer'),
-        throwsA(predicate((e) => e is Exception && e.message == msg)));
+        throwsA(predicate((e) => e is Exception && e.toString() == msg)));
   });
 
   test('Autowiring service', () {
