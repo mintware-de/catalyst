@@ -1,3 +1,15 @@
+## 2.0.2
+- Copyright updated
+- Travis fixed
+- Fix lib/container.dart. (-0.50 points): line 132 col 13: Don't explicitly initialize variables to null.
+- Fix lib/service.dart. (-0.50 points): line 50 col 13: Use isNotEmpty instead of length
+- `isInstanceOf<T>` replaced by `TypeMatcher<T>`
+- `analysis_options.yaml` added
+
+## 2.0.0 / 2.0.1
+- SDK version constraint updated
+- Test version updated
+
 ## 1.1.1
 
 Tests fixed
