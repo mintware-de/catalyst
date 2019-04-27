@@ -1,5 +1,5 @@
 name: 'catalyst'
-version: 2.0.1
+version: 2.0.2
 description: The only dependency injection container for Dart you'll ever need
 author: Julian Finkler <julian@mintware.de>
 homepage: https://github.com/Devtronic/catalyst

@@ -12,7 +12,7 @@ It's fast, reliable and easy to understand.
 Add the following to your `pubspec.yaml`:
 ```yaml
 dependencies:
-  catalyst: ^2.0.0
+  catalyst: ^2.0.2
 ```
 
 Then run `pub get`
