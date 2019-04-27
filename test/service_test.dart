@@ -1,7 +1,7 @@
 /*
  * This file is part of the Catalyst package.
  *
- * Copyright 2018 by Julian Finkler <julian@mintware.de>
+ * Copyright 2018-2019 by Julian Finkler <julian@mintware.de>
  *
  * For the full copyright and license information, please read the LICENSE
  * file that was distributed with this source code.
@@ -15,7 +15,7 @@ void main() {
     var srv = new Service('foo', () => false);
 
     expect(srv.id, 'foo');
-    expect(srv.target, new isInstanceOf<Function>());
+    expect(srv.target, new TypeMatcher<Function>());
     expect(srv.arguments, null);
   });
 
@@ -23,7 +23,7 @@ void main() {
     var srv = new Service('bar', () => 42, ['foo', 'baz', 12]);
 
     expect(srv.id, 'bar');
-    expect(srv.target, new isInstanceOf<Function>());
+    expect(srv.target, new TypeMatcher<Function>());
     expect(srv.arguments, ['foo', 'baz', 12]);
   });
 

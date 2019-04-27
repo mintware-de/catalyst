@@ -1,7 +1,7 @@
 /*
  * This file is part of the Catalyst package.
  *
- * Copyright 2018 by Julian Finkler <julian@mintware.de>
+ * Copyright 2018-2019 by Julian Finkler <julian@mintware.de>
  *
  * For the full copyright and license information, please read the LICENSE
  * file that was distributed with this source code.
@@ -13,8 +13,8 @@ import 'package:test/test.dart';
 void main() {
   test('Test constructor and inheritance', () {
     var container = new Container();
-    expect(container, new isInstanceOf<Container>());
-    expect(container, new isInstanceOf<ContainerInterface>());
+    expect(container, new TypeMatcher<Container>());
+    expect(container, new TypeMatcher<ContainerInterface>());
   });
 
   test('Test register a service name twice fails', () {
@@ -44,7 +44,7 @@ void main() {
   test('Test register a service', () {
     var container = new Container();
     container.register('hello', () {});
-    expect(container.registeredServices['hello'], new isInstanceOf<Service>());
+    expect(container.registeredServices['hello'], new TypeMatcher<Service>());
   });
 
   test('Unregister service fails missing', () {
@@ -238,7 +238,7 @@ void main() {
     container.register('simpleDate', SimpleDate, [1955]);
 
     var date = container.get('simpleDate');
-    expect(date, new isInstanceOf<SimpleDate>());
+    expect(date, new TypeMatcher<SimpleDate>());
     expect(date.year, 1955);
   });
 
