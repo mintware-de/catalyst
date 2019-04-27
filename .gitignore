@@ -4,3 +4,4 @@
 .pub/
 doc/api/
 pubspec.lock
+.DS_Store

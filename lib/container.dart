@@ -129,7 +129,7 @@ class Container implements ContainerInterface {
 
     arguments = _injectServicesAndParameters(arguments);
 
-    dynamic service = null;
+    dynamic service;
     var target = this._services[id].target;
     if (target is Type) {
       service = reflectClass(target).newInstance(const Symbol(''), arguments);

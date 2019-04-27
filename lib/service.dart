@@ -47,7 +47,7 @@ class Service {
     if (!_targetMirrorLoaded) {
       if (target is Type) {
         var members = reflectClass(target).declarations.values;
-        if (members.length > 0) {
+        if (members.isNotEmpty) {
           _targetMirror =
               members.firstWhere((m) => m is MethodMirror && m.isConstructor);
         }
