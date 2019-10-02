@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-part of Catalyst;
+part of catalyst;
 
 class Container implements ContainerInterface {
   /// Holds the registered services
