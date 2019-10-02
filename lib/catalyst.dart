@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-library Catalyst;
+library catalyst;
 
 import 'dart:mirrors';
 
