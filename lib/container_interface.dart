@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-part of Catalyst;
+part of catalyst;
 
 abstract class ContainerInterface {
   /// Returns a registered service by [id]
