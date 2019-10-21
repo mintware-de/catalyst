@@ -17,6 +17,9 @@ dependencies:
 
 Then run `pub get`
 
+## ❤ Sponsors
+No sponsors at the moment. [Become a sponsor](https://github.com/sponsors/devtronic)
+
 ## 💡 Usage
 
 ### Importing
