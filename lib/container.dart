@@ -11,13 +11,13 @@ part of catalyst;
 
 class Container implements ContainerInterface {
   /// Holds the registered services
-  Map<String, Service> _services = new Map<String, Service>();
+  Map<String, Service> _services = Map<String, Service>();
 
   /// Holds the loaded services
-  Map<String, dynamic> _loadedServices = new Map<String, dynamic>();
+  Map<String, dynamic> _loadedServices = Map<String, dynamic>();
 
   /// Container parameters
-  Map<String, dynamic> _parameters = new Map<String, dynamic>();
+  Map<String, dynamic> _parameters = Map<String, dynamic>();
 
   /// Determines if auto wiring is enabled
   bool autoWire = true;
@@ -25,7 +25,7 @@ class Container implements ContainerInterface {
   @override
   get(String id) {
     if (!this.has(id)) {
-      throw new ServiceNotFoundException('The service "$id" does not exist');
+      throw ServiceNotFoundException('The service "$id" does not exist');
     }
 
     if (!this._loadedServices.containsKey(id)) {
@@ -51,14 +51,14 @@ class Container implements ContainerInterface {
   /// call.
   register(String id, dynamic service, [List<dynamic> arguments]) {
     if (has(id)) {
-      throw new Exception('A service with the id "$id" already exist');
+      throw Exception('A service with the id "$id" already exist');
     }
 
     if (id.trim() == '') {
-      throw new Exception('The id must have at least one character');
+      throw Exception('The id must have at least one character');
     }
 
-    _services[id] = new Service(id, service, arguments);
+    _services[id] = Service(id, service, arguments);
   }
 
   /// Unregister a registered service
@@ -67,11 +67,11 @@ class Container implements ContainerInterface {
   /// If a service is already loaded it can't be unregistered.
   unregister(String id) {
     if (!has(id)) {
-      throw new ServiceNotFoundException('The service "$id" does not exist');
+      throw ServiceNotFoundException('The service "$id" does not exist');
     } else if (_loadedServices.containsKey(id)) {
       var msg =
           'The service "$id" can not be unregistered because it\'s loaded';
-      throw new Exception(msg);
+      throw Exception(msg);
     }
     _services.remove(id);
   }
@@ -90,7 +90,7 @@ class Container implements ContainerInterface {
   /// is already in use, the parameter will be overridden.
   setParameter(String name, dynamic value, [bool override = true]) {
     if (_parameters.containsKey(name) && !override) {
-      throw new Exception('The parameter "$name" is already defined');
+      throw Exception('The parameter "$name" is already defined');
     }
     _parameters[name] = value;
   }
@@ -101,7 +101,7 @@ class Container implements ContainerInterface {
   unsetParameter(String name) {
     if (!_parameters.containsKey(name)) {
       var msg = 'A parameter with the name "$name" is not defined';
-      throw new ParameterNotDefinedException(msg);
+      throw ParameterNotDefinedException(msg);
     }
     _parameters.remove(name);
   }
@@ -110,7 +110,7 @@ class Container implements ContainerInterface {
   getParameter(String name) {
     if (!_parameters.containsKey(name)) {
       var msg = 'A parameter with the name "$name" is not defined';
-      throw new ParameterNotDefinedException(msg);
+      throw ParameterNotDefinedException(msg);
     }
     return _parameters[name];
   }
@@ -124,7 +124,7 @@ class Container implements ContainerInterface {
     var numGiven = arguments.length;
     var metadata = this._services[id].getMetadata();
     if (numGiven < metadata.minArguments || numGiven > metadata.maxArguments) {
-      throw new Exception(_buildWrongArgsMessage(id, numGiven, metadata));
+      throw Exception(_buildWrongArgsMessage(id, numGiven, metadata));
     }
 
     arguments = _injectServicesAndParameters(arguments);
@@ -144,7 +144,7 @@ class Container implements ContainerInterface {
     var injected = [];
     for (var argument in arguments) {
       if (argument is String) {
-        var paramMatcher = new RegExp(r"%([^%]*?)%");
+        var paramMatcher = RegExp(r"%([^%]*?)%");
 
         if (argument.substring(0, 1) == '@') {
           argument = get(argument.substring(1));
@@ -189,7 +189,7 @@ class Container implements ContainerInterface {
   /// 'The Service "foobar" expects exact 0 arguments, 1 given'
   /// 'The Service "foobar" expects min 1 and max. 2 arguments, 3 given'
   String _buildWrongArgsMessage(String id, int numGiven, ServiceMetaData meta) {
-    var buffer = new StringBuffer();
+    var buffer = StringBuffer();
     buffer.write('The Service "$id" expects ');
 
     if (meta.minArguments == meta.maxArguments) {

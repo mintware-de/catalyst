@@ -12,23 +12,23 @@ import 'package:test/test.dart';
 
 void main() {
   test('Constructor', () {
-    var srv = new Service('foo', () => false);
+    var srv = Service('foo', () => false);
 
     expect(srv.id, 'foo');
-    expect(srv.target, new TypeMatcher<Function>());
+    expect(srv.target, TypeMatcher<Function>());
     expect(srv.arguments, null);
   });
 
   test('Test constructor with arguments', () {
-    var srv = new Service('bar', () => 42, ['foo', 'baz', 12]);
+    var srv = Service('bar', () => 42, ['foo', 'baz', 12]);
 
     expect(srv.id, 'bar');
-    expect(srv.target, new TypeMatcher<Function>());
+    expect(srv.target, TypeMatcher<Function>());
     expect(srv.arguments, ['foo', 'baz', 12]);
   });
 
   test('Call target', () {
-    var srv = new Service('bar', (x) => 42 * x, ['foo', 'baz', 12]);
+    var srv = Service('bar', (x) => 42 * x, ['foo', 'baz', 12]);
 
     expect(srv.target(10), 420);
   });

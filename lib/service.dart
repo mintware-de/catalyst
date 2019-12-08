@@ -40,7 +40,7 @@ class Service {
       argTypes.add(parameter.type.reflectedType);
     }
 
-    return new ServiceMetaData(minArguments, maxArguments, argTypes);
+    return ServiceMetaData(minArguments, maxArguments, argTypes);
   }
 
   MethodMirror get targetMirror {

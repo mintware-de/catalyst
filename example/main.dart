@@ -10,7 +10,7 @@
 import 'package:catalyst/catalyst.dart';
 
 main() {
-  Container container = new Container();
+  Container container = Container();
 
   // Register the StackAsAService in the container
   container.register('shared_stack', StackAsAService);
@@ -45,7 +45,7 @@ main() {
 }
 
 class StackAsAService {
-  List<String> _entries = new List<String>();
+  List<String> _entries = List<String>();
 
   void add(String entry) {
     _entries.add(entry);

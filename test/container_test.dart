@@ -12,13 +12,13 @@ import 'package:test/test.dart';
 
 void main() {
   test('Test constructor and inheritance', () {
-    var container = new Container();
-    expect(container, new TypeMatcher<Container>());
-    expect(container, new TypeMatcher<ContainerInterface>());
+    var container = Container();
+    expect(container, TypeMatcher<Container>());
+    expect(container, TypeMatcher<ContainerInterface>());
   });
 
   test('Test register a service name twice fails', () {
-    var container = new Container();
+    var container = Container();
 
     container.register('failing', () {});
     expect(
@@ -30,7 +30,7 @@ void main() {
   });
 
   test('Test register a service with an empty id fails', () {
-    var container = new Container();
+    var container = Container();
 
     container.register('fail_service', () {});
     expect(
@@ -42,13 +42,13 @@ void main() {
   });
 
   test('Test register a service', () {
-    var container = new Container();
+    var container = Container();
     container.register('hello', () {});
-    expect(container.registeredServices['hello'], new TypeMatcher<Service>());
+    expect(container.registeredServices['hello'], TypeMatcher<Service>());
   });
 
   test('Unregister service fails missing', () {
-    var container = new Container();
+    var container = Container();
     expect(
         () => container.unregister('foobar'),
         throwsA(predicate((e) =>
@@ -57,7 +57,7 @@ void main() {
   });
 
   test('Unregister service fails already loaded', () {
-    var container = new Container();
+    var container = Container();
 
     container.register('foo', () => null);
     container.get('foo');
@@ -69,7 +69,7 @@ void main() {
   });
 
   test('Unregister service', () {
-    var container = new Container();
+    var container = Container();
 
     expect(container.registeredServices, hasLength(0));
     expect(container.loadedServices, hasLength(0));
@@ -84,7 +84,7 @@ void main() {
   });
 
   test('Load service fails', () {
-    var container = new Container();
+    var container = Container();
 
     var msg = 'The service "non_existent_service" does not exist';
     expect(
@@ -94,7 +94,7 @@ void main() {
   });
 
   test('Load service simple', () {
-    var container = new Container();
+    var container = Container();
     container.register('message', () => 'A simple message');
     expect(container.registeredServices, hasLength(1));
     expect(container.loadedServices, hasLength(0));
@@ -107,7 +107,7 @@ void main() {
   });
 
   test('Load service with dependency fails', () {
-    var container = new Container();
+    var container = Container();
     container.register('msg', (String dependency) => null, ['1', '2']);
 
     var msg = 'Exception: The Service "msg" expects exact 1 arguments, 2 given';
@@ -116,7 +116,7 @@ void main() {
   });
 
   test('Load service with optional dependency fails', () {
-    var container = new Container();
+    var container = Container();
     container.register('msg', ([String dependency]) => null, ['1', '2']);
 
     var msg =
@@ -126,14 +126,14 @@ void main() {
   });
 
   test('Load Service with static dependency', () {
-    var container = new Container();
+    var container = Container();
     container.register('msg', (String dep) => 'Hello, I am $dep', ['static']);
 
     expect(container.get('msg'), 'Hello, I am static');
   });
 
   test('Load service with service dependency', () {
-    var container = new Container();
+    var container = Container();
     container.register('a_dependency', () => 'dependency');
 
     container.register('msg', (String dep) {
@@ -144,7 +144,7 @@ void main() {
   });
 
   test('Load service with static dependency array', () {
-    var container = new Container();
+    var container = Container();
     container.register('msg', (List<String> arrMessages, [String sep = ';']) {
       return arrMessages.join(sep);
     }, [
@@ -156,10 +156,10 @@ void main() {
   });
 
   test('Load already loaded service', () {
-    var container = new Container();
+    var container = Container();
 
     container.register('my_year', () {
-      var date = new SimpleDate();
+      var date = SimpleDate();
       date.year = 1982;
       return date;
     });
@@ -180,14 +180,14 @@ void main() {
   });
 
   test('Add parameter', () {
-    var container = new Container();
+    var container = Container();
     container.addParameter('foobar', 'baz');
     expect(container.parameters.containsKey('foobar'), true);
     expect(container.parameters['foobar'], 'baz');
   });
 
   test('Add parameter fails already defined', () {
-    var container = new Container();
+    var container = Container();
     container.addParameter('foobar', 'baz');
 
     var msg = 'Exception: The parameter "foobar" is already defined';
@@ -196,7 +196,7 @@ void main() {
   });
 
   test('Set parameter', () {
-    var container = new Container();
+    var container = Container();
     container.setParameter('foobar', 'baz');
     expect(container.parameters.containsKey('foobar'), true);
     expect(container.parameters['foobar'], 'baz');
@@ -207,7 +207,7 @@ void main() {
   });
 
   test('Unset parameter fails not exist', () {
-    var container = new Container();
+    var container = Container();
 
     var msg = 'A parameter with the name "foobar" is not defined';
     expect(
@@ -217,7 +217,7 @@ void main() {
   });
 
   test('Unset parameter', () {
-    var container = new Container();
+    var container = Container();
     container.addParameter('foobar', 'baz');
     expect(container.parameters.containsKey('foobar'), true);
     expect(container.parameters['foobar'], 'baz');
@@ -227,23 +227,23 @@ void main() {
   });
 
   test('Has service', () {
-    var container = new Container();
+    var container = Container();
     expect(container.has('foo'), false);
     container.register('foo', () => null);
     expect(container.has('foo'), true);
   });
 
   test('Class as service target', () {
-    var container = new Container();
+    var container = Container();
     container.register('simpleDate', SimpleDate, [1955]);
 
     var date = container.get('simpleDate');
-    expect(date, new TypeMatcher<SimpleDate>());
+    expect(date, TypeMatcher<SimpleDate>());
     expect(date.year, 1955);
   });
 
   test('Get parameter fails', () {
-    var container = new Container();
+    var container = Container();
 
     var msg = 'A parameter with the name "foobar" is not defined';
     expect(
@@ -253,7 +253,7 @@ void main() {
   });
 
   test('Load service with parameter', () {
-    var container = new Container();
+    var container = Container();
     container.addParameter('database.host', 'my.server.tld');
     container.addParameter('database.port', '1337');
     container.register('db.ctx', (String server) {
@@ -263,7 +263,7 @@ void main() {
   });
 
   test('Autowiring service fails', () {
-    var container = new Container();
+    var container = Container();
     container.autoWire = true;
     container.register('simple_date', SimpleDate, [1955]);
     container.register('year_printer', (SimpleDate sd, Container nonExistent) {
@@ -277,7 +277,7 @@ void main() {
   });
 
   test('Autowiring service', () {
-    var container = new Container();
+    var container = Container();
     container.autoWire = true;
     container.register('simple_date', SimpleDate, [1955]);
     container.register('year_printer', (SimpleDate sd) {
