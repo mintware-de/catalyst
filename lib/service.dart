@@ -1,7 +1,7 @@
 /*
  * This file is part of the Catalyst package.
  *
- * Copyright 2018-2019 by Julian Finkler <julian@mintware.de>
+ * Copyright 2018-present by Julian Finkler <julian@mintware.de>
  *
  * For the full copyright and license information, please read the LICENSE
  * file that was distributed with this source code.
@@ -22,19 +22,18 @@ class Service {
   /// The arguments which are required to resolve the target
   final List<dynamic> _arguments;
 
-  bool _targetMirrorLoaded = false;
-  MethodMirror _targetMirror;
+  var _targetMirrorLoaded = false;
+  late MethodMirror _targetMirror;
 
   /// Creates a new service object
-  Service(this._id, this._target, [this._arguments]);
+  Service(this._id, this._target, [this._arguments = const []]);
 
   ServiceMetaData getMetadata() {
     var mirror = targetMirror;
     var minArguments = 0;
     var maxArguments = mirror.parameters.length;
 
-    List<Type> argTypes = [];
-
+    var argTypes = <Type>[];
     for (var parameter in mirror.parameters) {
       minArguments += !parameter.isOptional ? 1 : 0;
       argTypes.add(parameter.type.reflectedType);
@@ -48,14 +47,18 @@ class Service {
       if (target is Type) {
         var members = reflectClass(target).declarations.values;
         if (members.isNotEmpty) {
-          _targetMirror =
-              members.firstWhere((m) => m is MethodMirror && m.isConstructor);
+          _targetMirror = members
+              .whereType<MethodMirror>()
+              .firstWhere((m) => m.isConstructor);
         }
       } else if (target is Function) {
         _targetMirror = (reflect(target) as ClosureMirror).function;
+      } else {
+        throw Exception('Failed to create the target mirror');
       }
       _targetMirrorLoaded = true;
     }
+
     return _targetMirror;
   }
 
@@ -67,4 +70,8 @@ class Service {
 
   /// Getter for [_arguments]
   List<dynamic> get arguments => _arguments;
+}
+
+class NullService extends Service {
+  NullService() : super('NULL_SERVICE', null);
 }

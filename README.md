@@ -12,7 +12,7 @@ It's fast, reliable and easy to understand.
 Add the following to your `pubspec.yaml`:
 ```yaml
 dependencies:
-  catalyst: ^2.0.2
+  catalyst: ^3.0.0
 ```
 
 Then run `pub get`
@@ -31,7 +31,7 @@ import 'package:catalyst/catalyst.dart';
 To register a service you have to call the `register`-method.
 
 ```
-Container.register(String id, dynamic service, [List<dynamic> arguments])
+Container.register(String id, dynamic service, [arguments = const <dynamic>[]])
 ```
 
 |  Parameter | Description                                                                    | Example              |
@@ -44,13 +44,17 @@ Container.register(String id, dynamic service, [List<dynamic> arguments])
 Since not all services need an service injection, the arguments array also supports static entries.
 
 ```dart
-Container container = new Container();
+import 'package:catalyst/catalyst.dart';
 
-container.register('app.my_service', (String name) {
-  return 'Hello $name';
-}, ['Your Name']);
+void main() {
+  var container = Container();
 
-var knownServices = container.registeredServices; // Contains the registered Service 
+  container.register('app.my_service', (String name) {
+    return 'Hello $name';
+  }, ['Your Name']);
+
+  var knownServices = container.registeredServices; // Contains the registered Service
+}
 ```
 
 #### Register a service with a service dependency
@@ -59,25 +63,31 @@ In that case you can pass the service name with a @-prefix to reference to it.
 The (sub-) dependencies are solved recursively.
 
 ```dart
-Container container = new Container();
+import 'package:catalyst/catalyst.dart';
 
-container.register('app.another_service', () {
-  return {'name': 'Jane', 'age': '24'};
-});
+void main() {
+  var container = Container();
 
-container.register('app.my_service', (dynamic anotherService) {
-return "Name: ${anotherService['name']}, Age: ${anotherService['age']}";
-}, ['@app.another_service']);
+  container.register('app.another_service', () {
+    return {'name': 'Jane', 'age': '24'};
+  });
 
-print(container.get('app.my_service')); // Outputs "Name: Jane, Age: 24"
+  container.register('app.my_service', (dynamic anotherService) {
+    return "Name: ${anotherService['name']}, Age: ${anotherService['age']}";
+  }, ['@app.another_service']);
+
+  print(container.get('app.my_service')); // Outputs "Name: Jane, Age: 24"
+}
 ```
 
 #### Register a class as a service
 You can also register a class as a service. If the service is loaded, the constructor gets called with the dependencies.
 
 ```dart
+import 'package:catalyst/catalyst.dart';
+
 main() {
-  Container container = new Container();
+  var container = Container();
 
   // Register the first service
   container.register('namer', () => 'John Doe');
@@ -117,12 +127,16 @@ Container.get(String id)
 
 
 ```dart
-Container container = new Container();
+import 'package:catalyst/catalyst.dart';
 
-// Register the first service
-container.register('namer', () => 'Catalyst');
+void main() {
+  var container = Container();
 
-container.get('namer'); // returns "Catalyst"
+  // Register the first service
+  container.register('namer', () => 'Catalyst');
+
+  container.get('namer'); // returns "Catalyst"
+}
 ```
 
 ### Add Parameters
@@ -138,14 +152,18 @@ Container.addParameter(String name, dynamic value)
 
 To pass a parameter to a service, add before and after the name a '%': `%name.of.the.parameter%`
 ```dart
-Container container = new Container();
-container.addParameter('database.host', 'localhost');
 
-container.register('db.context', (String hostname) {
-return 'Connecting to $hostname';
-}, ['%database.host%']);
+import 'package:catalyst/catalyst.dart';
+void main() {
+  var container = Container();
+  container.addParameter('database.host', 'localhost');
 
-print(container.get('db.context')); // Outputs "Connecting to localhost"
+  container.register('db.context', (String hostname) {
+    return 'Connecting to $hostname';
+  }, ['%database.host%']);
+
+  print(container.get('db.context')); // Outputs "Connecting to localhost"
+}
 ```
 
 ## 🔌 Service auto wiring
@@ -155,8 +173,10 @@ That means, that you only need to register the service without passing depending
  
 For example:
 ```dart
+import 'package:catalyst/catalyst.dart';
+
 main() {
-  Container container = new Container();
+  container = Container();
   container.register('greeter', SimpleGreeter);
   container.register('greeting_printer', (SimpleGreeter greeter) {
     print(greeter.greet('Catalyst'));
@@ -166,7 +186,6 @@ main() {
 }
 
 class SimpleGreeter {
-
   String greet(String name) {
     return "Hello from $name!";
   }

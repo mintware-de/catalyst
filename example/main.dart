@@ -1,7 +1,7 @@
 /*
  * This file is part of the Catalyst package.
  *
- * Copyright 2018-2019 by Julian Finkler <julian@mintware.de>
+ * Copyright 2018-present by Julian Finkler <julian@mintware.de>
  *
  * For the full copyright and license information, please read the LICENSE
  * file that was distributed with this source code.
@@ -9,8 +9,8 @@
 
 import 'package:catalyst/catalyst.dart';
 
-main() {
-  Container container = Container();
+void main() {
+  var container = Container();
 
   // Register the StackAsAService in the container
   container.register('shared_stack', StackAsAService);
@@ -21,8 +21,8 @@ main() {
   // Modify the stack
   print(stack.length); // Outputs 0
 
-  stack.add("Hello");
-  stack.add("World");
+  stack.add('Hello');
+  stack.add('World');
 
   print(stack.length); // Outputs 2
 
@@ -45,7 +45,7 @@ main() {
 }
 
 class StackAsAService {
-  List<String> _entries = List<String>();
+  final _entries = <String>[];
 
   void add(String entry) {
     _entries.add(entry);

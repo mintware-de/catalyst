@@ -1,7 +1,7 @@
 /*
  * This file is part of the Catalyst package.
  *
- * Copyright 2018-2019 by Julian Finkler <julian@mintware.de>
+ * Copyright 2018-present by Julian Finkler <julian@mintware.de>
  *
  * For the full copyright and license information, please read the LICENSE
  * file that was distributed with this source code.
@@ -117,7 +117,7 @@ void main() {
 
   test('Load service with optional dependency fails', () {
     var container = Container();
-    container.register('msg', ([String dependency]) => null, ['1', '2']);
+    container.register('msg', ([String? dependency]) => null, ['1', '2']);
 
     var msg =
         'Exception: The Service "msg" expects min. 0 and max. 1 arguments, 2 given';
@@ -289,7 +289,7 @@ void main() {
 }
 
 class SimpleDate {
-  int year;
+  int? year;
 
   SimpleDate([this.year]);
 }
