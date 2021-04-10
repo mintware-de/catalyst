@@ -1,7 +1,7 @@
-[![GitHub license](https://img.shields.io/github/license/Devtronic/catalyst.svg)](https://github.com/Devtronic/catalyst/blob/master/LICENSE)
-[![Travis](https://img.shields.io/travis/Devtronic/catalyst.svg)](https://travis-ci.org/Devtronic/catalyst)
+[![GitHub license](https://img.shields.io/github/license/mintware-de/catalyst.svg)](https://github.com/mintware-de/catalyst/blob/master/LICENSE)
+[![Travis](https://img.shields.io/travis/mintware-de/catalyst.svg)](https://travis-ci.org/mintware-de/catalyst)
 [![Pub](https://img.shields.io/pub/v/catalyst.svg)](https://pub.dartlang.org/packages/catalyst)
-[![Coverage Status](https://coveralls.io/repos/github/Devtronic/catalyst/badge.svg?branch=master)](https://coveralls.io/github/Devtronic/catalyst?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/mintware-de/catalyst/badge.svg?branch=master)](https://coveralls.io/github/mintware-de/catalyst?branch=master)
 
 # Catalyst
 
@@ -16,9 +16,6 @@ dependencies:
 ```
 
 Then run `pub get`
-
-## ❤ Sponsors
-No sponsors at the moment. [Become a sponsor](https://github.com/sponsors/devtronic)
 
 ## 💡 Usage
 
